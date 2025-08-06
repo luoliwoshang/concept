@@ -69,6 +69,50 @@ flag变为1了，总共循环了 -518742807 次
    - 不使用volatile时，编译器可能缓存了flag值，直到某个系统同步点才"看到"变化
    - volatile确保每次循环都检查内存中的真实flag值
 
+## LLVM IR 编译器优化分析
+
+通过生成LLVM IR文件对比，发现了"整数倍"现象的真正原因：
+
+```bash
+# 生成LLVM IR进行对比
+clang -S -emit-llvm -O2 busy_wait_demo.c -o busy_wait_demo.ll
+clang -S -emit-llvm -O2 busy_wait_demo_volatile.c -o busy_wait_demo_volatile.ll
+```
+
+### 关键差异
+
+**不使用volatile时**（busy_wait_demo.ll:48行）：
+```llvm
+15:                                               
+  %16 = tail call i32 (ptr, ...) @printf(...)
+  %17 = load i32, ptr @counter, align 4
+  %18 = load i32, ptr @flag, align 4    ; ← 只在printf后才检查flag!
+  br label %19
+```
+
+**使用volatile时**（busy_wait_demo_volatile.ll:52行）：
+```llvm
+18:                                               
+  %19 = phi i32 [ %17, %15 ], [ %9, %7 ]
+  %20 = load volatile i32, ptr @flag, align 4   ; ← 每次循环都检查flag!
+  %21 = icmp eq i32 %20, 0
+  br i1 %21, label %7, label %22
+```
+
+### 编译器优化策略揭秘
+
+**不使用volatile**：
+- 编译器将flag检查**移动到printf分支内**
+- 认为只有在打印时检查flag更高效
+- 结果：只有在计数为1亿倍数时才可能退出循环
+- 这就是为什么总数是-500000000（恰好5亿倍数）的原因！
+
+**使用volatile**：
+- 强制每次循环都执行 `load volatile` 指令
+- 无法被编译器优化移动位置
+- 结果：可以在任意时刻响应flag变化
+- 总数-518742807是真实的执行次数
+
 ## 关键区别
 
 - **不使用volatile**: 可能使用缓存值，信号处理后有延迟
