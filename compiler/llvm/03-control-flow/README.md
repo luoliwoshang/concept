@@ -70,3 +70,47 @@ is_zero:
 not_zero:
   ret i32 200
 }
+
+## PHI 节点
+
+PHI节点是LLVM IR中最重要的概念之一，用于处理控制流汇合点的值选择。
+
+想象这种情况：你有两个分支，每个分支计算出不同的值，最后要合并到一起：
+
+```c
+int x;
+if (condition) {
+    x = 10;
+} else {
+    x = 20;
+}
+// 这里的 x 应该是多少？
+```
+
+在普通程序里，x的值取决于走了哪个分支。但在SSA形式的LLVM IR中，每个变量只能赋值一次，所以需要PHI节点来"选择"值。
+
+### PHI 节点语法
+```llvm
+%result = phi <type> [ <value1>, <label1> ], [ <value2>, <label2> ], ...
+```
+
+### PHI 节点示例
+```llvm
+define i32 @phi_example(i1 %condition) {
+entry:
+  br i1 %condition, label %true_branch, label %false_branch
+
+true_branch:
+  br label %merge
+
+false_branch:
+  br label %merge
+
+merge:
+  ; PHI节点根据来源基本块选择值
+  %x = phi i32 [ 10, %true_branch ], [ 20, %false_branch ]
+  ret i32 %x
+}
+```
+
+这个PHI节点的意思是：如果是从%true_branch过来的，%x就是10；如果是从%false_branch过来的，%x就是20。
