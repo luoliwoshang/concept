@@ -28,26 +28,33 @@ volatile关键字概念 ✅ (通过实际例子理解了作用)
 │   ├── 死代码消除 📝 TODO
 │   └── 常量折叠 📝 TODO
 │
-└── LLVM IR分析 🔄 (刚开始)
+└── LLVM IR分析 🔄 (进行中)
     ├── 第一个IR示例 ✅
     │   ├── 基本语法 ✅
     │   ├── alloca/store/load指令 ✅
     │   └── 函数调用机制 ✅
     │
-    ├── 中间表示语法进阶 📝 TODO
-    │   ├── SSA形式深入理解 📝 TODO
-    │   ├── 类型系统详解 📝 TODO
-    │   └── 指令分类与用法 📝 TODO
+    ├── 中间表示语法进阶 ✅
+    │   ├── SSA形式深入理解 ✅
+    │   ├── 类型系统详解 ✅
+    │   └── 指令分类与用法 ✅
     │
-    ├── PHI节点概念 📝 TODO
-    │   ├── 控制流合并原理 📝 TODO
-    │   ├── 条件分支处理 📝 TODO
-    │   └── 循环中的PHI节点 📝 TODO
+    ├── 控制流概念 ✅
+    │   ├── 基本块结构 ✅
+    │   ├── 跳转指令详解 ✅
+    │   ├── PHI节点概念 ✅
+    │   ├── 循环结构 ✅
+    │   └── SSA在循环中的工作原理 ✅
     │
-    ├── 基本块结构 📝 TODO
-    │   ├── 基本块定义与识别 📝 TODO
-    │   ├── 控制流图构建 📝 TODO
-    │   └── 跳转指令详解 📝 TODO
+    ├── 指针操作 📝 TODO
+    │   ├── getelementptr指令详解 📝 TODO
+    │   ├── 内存地址计算 📝 TODO
+    │   └── 数组和结构体访问 📝 TODO
+    │
+    ├── 尾调用优化 📝 TODO (准备学习)
+    │   ├── 尾调用基本概念 📝 TODO
+    │   ├── 栈帧复用原理 📝 TODO
+    │   └── 递归优化策略 📝 TODO
     │
     └── 优化pass分析 📝 TODO
         ├── volatile示例中的优化现象分析 🔄 TODO
@@ -75,8 +82,19 @@ volatile关键字概念 ✅ (通过实际例子理解了作用)
 
 #### LLVM 工具链
 - [`compiler/llvm/`](compiler/llvm/) - LLVM 编译器基础设施学习
-  - **LLVM IR 基础** - 中间表示语言入门
+  - **LLVM IR 学习路径**
     - [`01-first-ir/`](compiler/llvm/01-first-ir/) - 第一个 LLVM IR 示例
       - 简单 add 函数的 C 代码到 IR 转换
       - alloca, store, load 指令详解
       - 函数调用机制分析
+    - [`02-ir-syntax/`](compiler/llvm/02-ir-syntax/) - LLVM IR 语法详解
+      - 类型系统和标识符命名
+      - 指令分类和SSA形式特点
+      - 属性和元数据系统
+    - [`03-control-flow/`](compiler/llvm/03-control-flow/) - 控制流概念
+      - 基本块结构和跳转指令
+      - PHI节点和控制流合并
+      - 循环结构和SSA在循环中的工作原理
+    - [`04-getelementptr/`](compiler/llvm/04-getelementptr/) - 指针操作详解
+      - getelementptr指令和内存地址计算
+      - 数组和结构体访问模式
