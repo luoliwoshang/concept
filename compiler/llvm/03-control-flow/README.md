@@ -114,3 +114,62 @@ merge:
 ```
 
 这个PHI节点的意思是：如果是从%true_branch过来的，%x就是10；如果是从%false_branch过来的，%x就是20。
+
+## 循环结构
+
+循环在LLVM IR中很有意思。我们以一个简单的for循环为例：
+
+```c
+int sum = 0;
+for (int i = 0; i < n; i++) {
+    sum += i;
+}
+```
+
+这个循环在LLVM IR中会变成这样的结构：
+
+```llvm
+define i32 @sum_loop(i32 %n) {
+entry:
+  br label %loop_header
+
+loop_header:
+  %i = phi i32 [ 0, %entry ], [ %next_i, %loop_body ]
+  %sum = phi i32 [ 0, %entry ], [ %next_sum, %loop_body ]
+  %cond = icmp slt i32 %i, %n
+  br i1 %cond, label %loop_body, label %exit
+
+loop_body:
+  %next_sum = add i32 %sum, %i      ; sum += i (累加过程)
+  %next_i = add i32 %i, 1           ; i++ (递增过程)
+  br label %loop_header             ; 跳回循环头
+
+exit:
+  ret i32 %sum
+}
+```
+
+### SSA形式在循环中的工作原理
+
+关键理解：在SSA形式中，**每个变量名确实只能被赋值一次**，这个原则在循环中也不会被违反。
+
+- **静态视角**：`%next_sum` 只被定义一次（在 `add` 指令中）
+- **动态执行**：这条指令会被执行多次，每次产生不同的值
+- **PHI节点作用**：在每次重新进入循环头时，选择正确的值
+
+```llvm
+loop_header:
+  %sum = phi i32 [ 0, %entry ], [ %next_sum, %loop_body ]
+```
+
+这个PHI节点在说：
+- 第1次进入循环：`%sum` = 0（来自entry）  
+- 第2次进入循环：`%sum` = 第1次迭代的`%next_sum`值
+- 第3次进入循环：`%sum` = 第2次迭代的`%next_sum`值
+- ...
+
+### SSA的"单赋值"真正含义
+
+SSA的"单赋值"指的是：在程序的**静态表示**中，每个变量名只能出现在一个赋值指令的左侧。但这个指令可以被**动态执行多次**。
+
+所以 `%next_sum` 在静态IR中只有一个定义点，但运行时会产生多个不同的值，PHI节点负责在控制流汇合点选择正确的值。
