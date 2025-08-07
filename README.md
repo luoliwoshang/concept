@@ -69,5 +69,14 @@ volatile关键字概念 ✅ (通过实际例子理解了作用)
 #### 内存管理
 - [`compiler/memory/`](compiler/memory/) - 内存访问和编译器优化相关概念
   - **volatile关键字** - 防止编译器优化的内存访问控制
-    - 信号处理演示和LLVM IR分析
+    - 多线程和信号处理对比实验
+    - LLVM IR 差异分析
     - 编译器优化策略深度解析
+
+#### LLVM 工具链
+- [`compiler/llvm/`](compiler/llvm/) - LLVM 编译器基础设施学习
+  - **LLVM IR 基础** - 中间表示语言入门
+    - [`01-first-ir/`](compiler/llvm/01-first-ir/) - 第一个 LLVM IR 示例
+      - 简单 add 函数的 C 代码到 IR 转换
+      - alloca, store, load 指令详解
+      - 函数调用机制分析
