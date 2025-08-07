@@ -71,7 +71,8 @@ ret i32 0                              ; 返回
 1. [`01-first-ir/`](01-first-ir/) - 第一个LLVM IR程序和基本概念
 2. [`02-ir-syntax/`](02-ir-syntax/) - LLVM IR语法详解
 3. [`03-control-flow/`](03-control-flow/) - 控制流：基本块、跳转指令、PHI节点、循环
-4. [`04-getelementptr/`](04-getelementptr/) - 指针操作和内存地址计算
+4. [`04-functions/`](04-functions/) - 函数调用机制：参数属性、调用约定、函数属性
+5. [`05-getelementptr/`](05-getelementptr/) - 指针操作和内存地址计算
 
 ### 其他资源
 - [`ir-basics/`](ir-basics/) - LLVM IR 语法基础和示例
