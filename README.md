@@ -46,6 +46,12 @@ volatile关键字概念 ✅ (通过实际例子理解了作用)
     │   ├── 循环结构 ✅
     │   └── SSA在循环中的工作原理 ✅
     │
+    ├── 函数调用机制 🔄 (进行中)
+    │   ├── 参数属性详解 ✅
+    │   ├── 数值扩展机制 ✅
+    │   ├── 调用约定 📝 TODO
+    │   └── 函数属性系统 📝 TODO
+    │
     ├── 指针操作 📝 TODO
     │   ├── getelementptr指令详解 📝 TODO
     │   ├── 内存地址计算 📝 TODO
@@ -95,6 +101,9 @@ volatile关键字概念 ✅ (通过实际例子理解了作用)
       - 基本块结构和跳转指令
       - PHI节点和控制流合并
       - 循环结构和SSA在循环中的工作原理
-    - [`04-getelementptr/`](compiler/llvm/04-getelementptr/) - 指针操作详解
+    - [`04-functions/`](compiler/llvm/04-functions/) - 函数调用机制详解
+      - 参数属性和数值扩展机制
+      - 调用约定和函数属性系统
+    - [`05-getelementptr/`](compiler/llvm/05-getelementptr/) - 指针操作详解
       - getelementptr指令和内存地址计算
       - 数组和结构体访问模式
