@@ -107,6 +107,10 @@ store i32 42, ptr %ptr               ; 存储值到内存
 %cmp2 = icmp slt i32 %a, %b         ; 有符号小于比较
 %cmp3 = icmp ugt i32 %a, %b         ; 无符号大于比较
 %fcmp = fcmp olt float %x, %y       ; 浮点小于比较
+
+; 示例：常量比较和类型转换
+%const_cmp = icmp eq i32 0, 0        ; 比较两个常量，结果为 i1 true
+%extended = zext i1 %const_cmp to i32 ; 将 i1 零扩展为 i32 (true变为1, false变为0)
 ```
 
 ### 4. 控制流指令
@@ -117,7 +121,24 @@ ret i32 %value                       ; 返回值
 ret void                             ; 无返回值
 ```
 
-### 5. 函数调用
+### 5. 类型转换指令
+```llvm
+; 整数类型转换
+%trunc = trunc i32 %val to i16       ; 截断（高位丢弃）
+%zext = zext i16 %val to i32         ; 零扩展（高位补0）
+%sext = sext i16 %val to i32         ; 符号扩展（高位补符号位）
+
+; 浮点类型转换
+%fptrunc = fptrunc double %val to float    ; 浮点截断
+%fpext = fpext float %val to double        ; 浮点扩展
+
+; 整数和浮点间转换
+%sitofp = sitofp i32 %val to float         ; 有符号整数转浮点
+%uitofp = uitofp i32 %val to float         ; 无符号整数转浮点
+%fptosi = fptosi float %val to i32         ; 浮点转有符号整数
+```
+
+### 6. 函数调用
 ```llvm
 %result = call i32 @func(i32 %arg1, i32 %arg2)    ; 函数调用
 tail call void @func()                             ; 尾调用
