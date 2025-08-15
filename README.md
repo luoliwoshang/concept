@@ -62,10 +62,12 @@ volatile关键字概念 ✅ (通过实际例子理解了作用)
     │   ├── 栈帧复用原理 📝 TODO
     │   └── 递归优化策略 📝 TODO
     │
-    └── 优化pass分析 📝 TODO
-        ├── volatile示例中的优化现象分析 🔄 TODO
-        ├── 循环不变量提取 📝 TODO
-        └── 控制流图优化 📝 TODO
+    ├── 优化pass分析 📝 TODO
+    │   ├── volatile示例中的优化现象分析 🔄 TODO
+    │   ├── 循环不变量提取 📝 TODO
+    │   └── 控制流图优化 📝 TODO
+    │
+    └── TinyGo与LLVM集成 📝 TODO
 ```
 
 ### 学习路径说明
