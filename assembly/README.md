@@ -25,12 +25,12 @@
 │   ├── 内存模型 ✅ 已完成
 │   └── 寻址模式 ✅ 已完成
 │
-├── 基本指令集 ✅ 已完成
-│   ├── 数据传输指令 ✅ 已完成
-│   ├── 算术运算指令 ✅ 已完成
-│   ├── 逻辑运算指令 ✅ 已完成
-│   ├── 控制转移指令 ✅ 已完成
-│   └── 栈操作指令 ✅ 已完成
+├── 基本指令集 📝 TODO
+│   ├── 数据传输指令 📝 TODO
+│   ├── 算术运算指令 📝 TODO
+│   ├── 逻辑运算指令 📝 TODO
+│   ├── 控制转移指令 📝 TODO
+│   └── 栈操作指令 📝 TODO
 │
 ├── 程序结构 📝 TODO
 │   ├── 段结构概念 📝 TODO
@@ -89,13 +89,15 @@ concept/
 └── assembly/              # 汇编语言学习
     ├── README.md          # 本文件 - 学习路径概述
     ├── 01-basics/         # 汇编基础概念  
-    │   ├── README.md      # 汇编语法、第一个程序
+    │   ├── README.md      # 汇编语法、第一个程序 (x86-64)
+    │   ├── README_ARM64.md # ARM64 AT&T语法教程
     │   ├── registers.md   # 寄存器系统详解
     │   ├── memory.md      # 内存模型和寻址模式
-    │   ├── hello.asm      # Hello World示例
-    │   └── first_program.asm  # 简单计算示例
-    ├── 02-instructions/   # 指令集详解
-    │   └── README.md      # 完整指令集参考
+    │   ├── hello.asm      # Hello World示例 (x86-64)
+    │   ├── hello_arm64.s  # Hello World示例 (ARM64)
+    │   ├── first_program.asm      # 简单计算示例 (x86-64)
+    │   └── first_program_arm64.s  # 简单计算示例 (ARM64)
+    ├── 02-instructions/   # 指令集详解 (待完成)
     ├── 03-programming/    # 编程技巧 (待完成)
     ├── 04-projects/       # 实践项目 (待完成)
     └── tools/             # 工具和脚本 (待完成)
@@ -105,6 +107,8 @@ concept/
 
 1. **[../computer-fundamentals](../computer-fundamentals/)** - 了解计算机基本工作原理
 2. **[01-basics](01-basics/)** - 学习汇编语法和编写第一个程序
-3. **[02-instructions](02-instructions/)** - 掌握常用指令
-4. **[03-programming](03-programming/)** - 学习编程技巧和最佳实践
-5. **[04-projects](04-projects/)** - 通过项目实践巩固知识
+   - **macOS用户**: 优先阅读 `README_ARM64.md` (ARM64 + AT&T语法)
+   - **其他用户**: 阅读 `README.md` (x86-64 + Intel语法)
+3. **[02-instructions](02-instructions/)** - 掌握常用指令 (待完成)
+4. **[03-programming](03-programming/)** - 学习编程技巧和最佳实践 (待完成)
+5. **[04-projects](04-projects/)** - 通过项目实践巩固知识 (待完成)
