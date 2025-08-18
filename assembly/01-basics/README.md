@@ -1,4 +1,6 @@
-# 汇编语言基础概念
+# 汇编语言基础概念 (ARM64)
+
+> **适用平台**: Apple Silicon Mac (ARM64 架构)
 
 汇编语言是最接近机器语言的编程语言，每条汇编指令几乎直接对应一条机器指令。理解汇编语言是深入理解计算机系统运行原理的关键。
 
@@ -20,19 +22,20 @@ int b = 10;
 int c = a + b;
 ```
 
-```nasm
-; x86-64 汇编
-mov rax, 5      ; 将 5 加载到 rax 寄存器
-mov rbx, 10     ; 将 10 加载到 rbx 寄存器
-add rax, rbx    ; rax = rax + rbx (5 + 10)
+```asm
+// ARM64 汇编
+mov x0, #5      // 将 5 加载到 x0 寄存器
+mov x1, #10     // 将 10 加载到 x1 寄存器
+add x2, x0, x1  // x2 = x0 + x1 (5 + 10)
 ```
 
-### 2. 汇编语言的特点
+### 2. ARM64汇编语言的特点
 
 - **直接控制硬件**: 可以直接操作寄存器和内存
 - **无抽象**: 没有高级语言的抽象概念，直接面对硬件
-- **平台相关**: 不同的CPU架构有不同的汇编语言
+- **平台相关**: ARM64有独特的指令集和寄存器系统
 - **精确控制**: 可以精确控制程序的每一步执行
+- **RISC设计**: 精简指令集，指令格式规整统一
 
 ### 3. 为什么学习汇编语言
 
@@ -42,185 +45,189 @@ add rax, rbx    ; rax = rax + rbx (5 + 10)
 4. **安全研究**: 逆向工程、漏洞分析
 5. **调试技能**: 更好地分析和调试程序问题
 
-## 基本语法结构
+## ARM64基本语法结构
 
 ### 指令格式
-```nasm
-操作码 操作数1, 操作数2
+```asm
+操作码 目标操作数, 源操作数1, 源操作数2
 ```
 
 示例：
-```nasm
-mov rax, rbx    ; 操作码: mov, 操作数: rax(目标), rbx(源)
-add rax, 10     ; 操作码: add, 操作数: rax, 10(立即数)
+```asm
+mov x0, x1      // 操作码: mov, 将x1的值复制到x0
+add x0, x1, #10 // 操作码: add, x0 = x1 + 10(立即数)
 ```
 
 ### 注释
-```nasm
-; 这是单行注释，使用分号开始
-mov rax, 5      ; 行尾注释
+```asm
+// 这是单行注释，使用双斜杠开始
+mov x0, #5      // 行尾注释
 ```
 
 ### 标签 (Labels)
-```nasm
-main:           ; 标签定义
-    mov rax, 5
+```asm
+_main:              // 标签定义
+    mov x0, #5
     ret
 
-loop_start:     ; 循环开始标签
-    dec rax
-    jnz loop_start  ; 跳转到标签
+loop_start:         // 循环开始标签
+    subs x0, x0, #1
+    bne loop_start  // 不为零时跳转到标签
 ```
 
 ### 伪指令 (Directives)
-```nasm
-section .data   ; 定义数据段
-    msg db 'Hello, World!', 0  ; 定义字符串
+```asm
+.section __DATA,__data          // 定义数据段
+    msg: .asciz "Hello, World!" // 定义字符串
 
-section .text   ; 定义代码段
-    global _start   ; 声明全局符号
+.section __TEXT,__text,regular,pure_instructions
+.globl _main                    // 声明全局符号
 ```
 
-## 第一个汇编程序
+## 第一个ARM64汇编程序
 
-### hello.asm
-```nasm
-section .data
-    msg db 'Hello, World!', 0xA, 0    ; 字符串 + 换行符 + 空字符
-    msg_len equ $ - msg - 1           ; 计算字符串长度
+### hello_arm64.s
+```asm
+.section __TEXT,__text,regular,pure_instructions
+.globl _main
+.p2align 2
 
-section .text
-    global _start
+_main:
+    // 准备write系统调用的参数
+    mov x0, #1                      // 文件描述符: stdout
+    adrp x1, msg@PAGE              // 获取字符串地址(高位)
+    add x1, x1, msg@PAGEOFF        // 获取字符串地址(低位)
+    mov x2, #23                     // 字符串长度
+    
+    // 调用write系统调用
+    mov x16, #4                     // write系统调用号
+    svc #0x80                       // 执行系统调用
+    
+    // 返回0
+    mov x0, #0                      // 返回值
+    ret                             // 返回
 
-_start:
-    ; write系统调用
-    mov rax, 1          ; sys_write
-    mov rdi, 1          ; stdout
-    mov rsi, msg        ; 消息地址
-    mov rdx, msg_len    ; 消息长度
-    syscall             ; 调用系统调用
-
-    ; exit系统调用
-    mov rax, 60         ; sys_exit
-    mov rdi, 0          ; 退出状态
-    syscall             ; 调用系统调用
+.section __TEXT,__cstring,cstring_literals
+msg:
+    .asciz "Hello, Assembly World!\n"
 ```
 
 ### 编译和运行
 ```bash
-# 使用 NASM 汇编
-nasm -f elf64 hello.asm -o hello.o
-
-# 使用 ld 链接
-ld hello.o -o hello
+# 使用 clang 编译
+clang -o hello_arm64 hello_arm64.s
 
 # 运行
-./hello
+./hello_arm64
 ```
 
-## 数据类型和大小
+## ARM64数据类型和寄存器
 
 ### 两个重要概念
 
 #### 1. 寄存器 - CPU内部的存储盒子
-寄存器是CPU芯片内部的高速存储单元，用来临时存放数据：
+ARM64寄存器是CPU芯片内部的高速存储单元，用来临时存放数据：
 
 | 大小 | 寄存器示例 | 说明 |
 |------|------------|------|
-| 8位  | al, bl, cl | 最小的寄存器 |
-| 16位 | ax, bx, cx | 16位寄存器 |
-| 32位 | eax, ebx, ecx | 32位寄存器 |
-| 64位 | rax, rbx, rcx | 64位寄存器 |
+| 32位 | w0, w1, w2 | 32位通用寄存器 |
+| 64位 | x0, x1, x2 | 64位通用寄存器 |
 
-```nasm
-mov rax, 5      ; 将数字5放到rax寄存器中
-mov al, 10      ; 将数字10放到al寄存器中
+```asm
+mov x0, #5      // 将数字5放到x0寄存器中(64位)
+mov w0, #10     // 将数字10放到w0寄存器中(32位)
 ```
+
+**重要**: w0是x0的低32位，修改w0会自动清零x0的高32位！
 
 #### 2. 内存数据定义 - 在内存中划定存储空间
 使用伪指令在内存中定义不同大小的数据：
 
 | 大小 | 伪指令 | 示例 |
 |------|--------|------|
-| 8位  | db     | `my_byte db 5` |
-| 16位 | dw     | `my_word dw 1234` |
-| 32位 | dd     | `my_dword dd 12345678` |
-| 64位 | dq     | `my_qword dq 123456789` |
+| 8位  | .byte  | `my_byte: .byte 5` |
+| 16位 | .short | `my_short: .short 1234` |
+| 32位 | .long  | `my_long: .long 12345678` |
+| 64位 | .quad  | `my_quad: .quad 123456789` |
 
-```nasm
-section .data
-    my_byte  db 5           ; 在内存中定义8位数据
-    my_word  dw 1234        ; 在内存中定义16位数据
-    my_dword dd 12345678    ; 在内存中定义32位数据
-    my_qword dq 123456789   ; 在内存中定义64位数据
-    
-    numbers db 1,2,3,4,5    ; 字节数组
-    string db "Hello",0     ; 字符串（以0结尾）
-    buffer resb 64          ; 保留64字节的未初始化空间
+```asm
+.section __DATA,__data
+my_byte:  .byte 5           // 在内存中定义8位数据
+my_short: .short 1234       // 在内存中定义16位数据
+my_long:  .long 12345678    // 在内存中定义32位数据
+my_quad:  .quad 123456789   // 在内存中定义64位数据
+
+numbers: .byte 1,2,3,4,5    // 字节数组
+string:  .asciz "Hello"     // 字符串（自动以0结尾）
 ```
 
 ### 尺寸匹配的重要性
 
-寄存器和数据的尺寸必须匹配，才能正确操作：
+寄存器和数据的尺寸应该合理匹配，才能高效操作：
 
-```nasm
-section .data
-    my_byte db 5
-    my_word dw 1234
+```asm
+.section __DATA,__data
+my_byte: .byte 5
+my_long: .long 1234
 
-section .text
-    ; ✅ 正确：8位数据用8位寄存器
-    mov al, [my_byte]
+.section __TEXT,__text,regular,pure_instructions
+    // ✅ 推荐：32位数据用32位寄存器
+    adrp x1, my_long@PAGE
+    add x1, x1, my_long@PAGEOFF
+    ldr w0, [x1]            // 加载32位数据到w0
     
-    ; ✅ 正确：16位数据用16位寄存器  
-    mov ax, [my_word]
-    
-    ; ❌ 错误：尺寸不匹配
-    mov rax, [my_byte]      ; 64位寄存器装8位数据
-    mov al, [my_word]       ; 8位寄存器装16位数据
+    // ✅ 推荐：8位数据用专用指令
+    adrp x1, my_byte@PAGE
+    add x1, x1, my_byte@PAGEOFF
+    ldrb w0, [x1]           // 加载8位数据到w0(零扩展)
 ```
 
 **关键理解：**
 - 寄存器在CPU内部，速度最快
 - 内存数据在RAM中，需要通过地址访问
-- 操作时必须尺寸匹配，这样CPU效率最高
+- ARM64有专门的加载指令：`ldr`(32/64位), `ldrb`(8位), `ldrh`(16位)
 
 ## 立即数、寄存器和内存
 
 ### 立即数 (Immediate)
-```nasm
-mov rax, 42         ; 将立即数 42 移动到 rax
-add rbx, 100        ; 将立即数 100 加到 rbx
+```asm
+mov x0, #42         // 将立即数 42 移动到 x0
+add x1, x0, #100    // x1 = x0 + 100(立即数)
 ```
 
 ### 寄存器 (Register)
-```nasm
-mov rax, rbx        ; 将 rbx 的值复制到 rax
-add rcx, rdx        ; rcx = rcx + rdx
+```asm
+mov x0, x1          // 将 x1 的值复制到 x0
+add x2, x0, x1      // x2 = x0 + x1
 ```
 
 ### 内存 (Memory)
-```nasm
-mov rax, [rbx]      ; 将 rbx 指向的内存内容加载到 rax
-mov [rax], rbx      ; 将 rbx 的值存储到 rax 指向的内存
-mov rax, [rbx+8]    ; 带偏移的内存访问
+```asm
+// 加载内存数据到寄存器
+adrp x1, data@PAGE      // 获取data地址的高位
+add x1, x1, data@PAGEOFF // 获取完整地址
+ldr x0, [x1]            // 从x1指向的内存加载数据到x0
+
+// 存储寄存器数据到内存
+str x0, [x1]            // 将x0的值存储到x1指向的内存
+ldr x0, [x1, #8]        // 带偏移的内存访问: x1+8
 ```
 
 ## 实践练习
 
-1. **编写第一个汇编程序**: 修改 hello.asm，输出你的名字
-2. **计算练习**: 编写程序计算两个数的和并输出结果
-3. **数据操作**: 定义一个数组，读取并输出第一个元素
+1. **编写第一个ARM64汇编程序**: 修改 hello_arm64.s，输出你的名字
+2. **计算练习**: 编写程序计算两个数的和并通过退出码返回
+3. **数据操作**: 定义一个数组，读取并处理第一个元素
 
 ## 下一步
 
 完成基础概念学习后，继续学习：
-- [寄存器系统](registers.md) - CPU寄存器详解
-- [内存模型](memory.md) - 内存布局和访问方式
-- [基本指令](../02-instructions/) - 常用汇编指令详解
+- [ARM64寄存器系统](registers.md) - ARM64寄存器详解
+- [内存模型](memory.md) - ARM64内存布局和访问方式
+- [基本指令](../02-instructions/) - 常用ARM64汇编指令详解
 
 ## 参考资源
 
-- **Intel手册**: Intel 64 and IA-32 Architectures Software Developer's Manual
-- **NASM文档**: NASM 汇编器用户手册
-- **系统调用**: Linux System Call Table
+- **ARM手册**: ARM Architecture Reference Manual ARMv8
+- **clang文档**: Clang 汇编器用户手册
+- **系统调用**: macOS System Call Table
