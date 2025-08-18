@@ -109,3 +109,24 @@ volatile关键字概念 ✅ (通过实际例子理解了作用)
     - [`05-getelementptr/`](compiler/llvm/05-getelementptr/) - 指针操作详解
       - getelementptr指令和内存地址计算
       - 数组和结构体访问模式
+
+### 计算机基础原理
+- [`computer-fundamentals/`](computer-fundamentals/) - 计算机系统基础知识
+  - CPU内部结构和工作原理
+  - 指令执行的四个阶段详解 (取指-译码-执行-回写)
+  - 二进制基础和数据表示
+  - 为学习汇编、编译器等提供理论基础
+
+### 汇编语言学习
+- [`assembly/`](assembly/) - 汇编语言完整学习路径
+  - **汇编基础概念**
+    - [`01-basics/`](assembly/01-basics/) - 汇编语法和第一个程序
+      - 汇编语言基本语法和程序结构
+      - x86-64寄存器系统详解
+      - 内存模型和寻址模式
+      - Hello World和简单计算示例
+  - **指令集详解**
+    - [`02-instructions/`](assembly/02-instructions/) - 完整x86-64指令集参考
+      - 数据传输、算术运算、逻辑运算指令
+      - 控制流和字符串操作指令
+      - 系统调用和处理器控制指令
