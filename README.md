@@ -109,6 +109,10 @@ volatile关键字概念 ✅ (通过实际例子理解了作用)
     - [`05-getelementptr/`](compiler/llvm/05-getelementptr/) - 指针操作详解
       - getelementptr指令和内存地址计算
       - 数组和结构体访问模式
+    - [`06-inline-assembly/`](compiler/llvm/06-inline-assembly/) - LLVM内联汇编教学
+      - 操作数占位符系统 (%0, %1, %2...)
+      - 约束类型和ARM64特定语法
+      - 编译器扩展语法详解
 
 ### 计算机基础原理
 - [`computer-fundamentals/`](computer-fundamentals/) - 计算机系统基础知识
