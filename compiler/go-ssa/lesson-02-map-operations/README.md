@@ -48,6 +48,7 @@ func main() {
 # 分析MakeMap的所有引用者 - 特别适合理解map的使用模式
 go build -o analyze-referrers cmd/analyze-referrers.go
 ./analyze-referrers 02-map-operations.go
+./analyze-referrers tinygo-style.go  # 分析TinyGo编译器案例
 ```
 
 ## 关键观察点
@@ -80,6 +81,32 @@ go build -o analyze-referrers cmd/analyze-referrers.go
 - 观察map操作如何转换为SSA指令
 - 理解多返回值的SSA表示
 - 分析条件分支在SSA中的基本块结构
+
+## 实际应用案例：TinyGo编译器
+
+`tinygo-style.go` 展示了一个真实的编译器应用场景 - TinyGo如何在编译时分析map的使用模式。
+
+### TinyGo的AsmFull函数
+TinyGo编译器需要处理内联汇编，用户这样调用：
+```go
+regs := make(map[string]interface{})
+regs["value"] = 42
+regs["result"] = 100
+AsmFull("mov {value}, {result}", regs)
+```
+
+### 编译器的SSA分析过程
+1. **找到MakeMap指令** - 定位到register map的创建
+2. **分析所有Referrers** - 通过 `registerMap.Referrers()` 找到所有使用
+3. **提取MapUpdate操作** - 获取所有的 `map["key"] = value` 操作
+4. **生成LLVM约束** - 将SSA分析结果转换为LLVM内联汇编
+
+### 用我们的工具分析
+```bash
+./analyze-referrers tinygo-style.go
+```
+
+这个例子完美展示了SSA Referrers在实际编译器中的应用！
 
 ## 下一步
 学习更复杂的控制流结构，如循环

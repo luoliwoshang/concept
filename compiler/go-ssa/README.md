@@ -24,6 +24,7 @@ go build -o ssa-viewer cmd/ssa-viewer.go
 
 ### [课程2: Map操作的SSA表示](lesson-02-map-operations/)
 学习map的创建、读取、写入操作以及多返回值和条件分支的SSA表示
+**包含TinyGo编译器真实应用案例** - 展示Referrers在实际编译器中的用途
 
 ### 即将推出
 - 课程3: 循环结构 (for)
