@@ -16,10 +16,13 @@ go build -o ssa-viewer cmd/ssa-viewer.go
 ### [课程1: 简单函数的SSA表示](lesson-01-simple-add/)
 学习最基础的函数调用和算术运算的SSA形式
 
+### [课程2: Map操作的SSA表示](lesson-02-map-operations/)
+学习map的创建、读取、写入操作以及多返回值和条件分支的SSA表示
+
 ### 即将推出
-- 课程2: 条件分支 (if-else)
 - 课程3: 循环结构 (for)
 - 课程4: 复杂控制流
+- 课程5: 接口和方法调用
 
 ## 使用方法
 每个课程目录包含：
