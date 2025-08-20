@@ -37,8 +37,17 @@ func main() {
 ```
 
 ## 查看SSA
+
+### 基础SSA查看
 ```bash
 ../ssa-viewer 02-map-operations.go
+```
+
+### 专门的Map引用分析
+```bash
+# 分析MakeMap的所有引用者 - 特别适合理解map的使用模式
+go build -o analyze-referrers cmd/analyze-referrers.go
+./analyze-referrers 02-map-operations.go
 ```
 
 ## 关键观察点

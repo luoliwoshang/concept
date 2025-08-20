@@ -9,7 +9,13 @@ go build -o ssa-viewer cmd/ssa-viewer.go
 ```
 
 ## 工具
-- `ssa-viewer` - 使用 `go/ssa` 包查看SSA表示的可执行工具
+
+### 基础工具
+- `ssa-viewer` - 查看SSA表示的命令行工具
+
+### 编程分析工具 
+- `pkg/ssautil` - SSA分析的Go包，提供编程接口
+- 每个lesson的 `cmd/` 目录 - 针对性的分析工具
 
 ## 课程目录
 
@@ -34,3 +40,39 @@ go build -o ssa-viewer cmd/ssa-viewer.go
 ```bash
 ../ssa-viewer [源码文件]
 ```
+
+## 编程分析
+
+你可以使用 `pkg/ssautil` 包来编写自己的SSA分析程序：
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "ssa-demo/pkg/ssautil"
+)
+
+func main() {
+    // 解析Go文件
+    analyzer, err := ssautil.ParseFile("example.go")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // 找到main函数并分析
+    mainFunc := analyzer.FindFunction("main")
+    if mainFunc != nil {
+        // 查找所有MakeMap指令
+        makeMaps := analyzer.FindInstructionsByType(mainFunc, "MakeMap")
+        for _, makeMap := range makeMaps {
+            // 分析引用者
+            referrers := analyzer.AnalyzeReferrers(makeMap.Instruction.(ssa.Value))
+            fmt.Printf("MakeMap有%d个引用者\n", len(referrers))
+        }
+    }
+}
+```
+
+更多示例请查看 `examples/` 目录。
